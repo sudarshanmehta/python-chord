@@ -270,8 +270,8 @@ class Local(object):
 			# defaul : "" = not respond anything
 			result = json.dumps("")
 			if command == "upload":
-				key = request.split(' ')[0]
-
+				key = parts[1]
+				msg = ' '.join(parts[2:])
 				self.upload(key,msg)
                         # to check if it can be connected
 			if command == "ping_node":
