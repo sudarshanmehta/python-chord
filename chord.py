@@ -69,7 +69,18 @@ class Local(object):
 		self.daemons_ = {}
 		# initially no commands
 		self.command_ = []
+		# initial simple storage in hashmap itself
+		self.data = {}
 
+	# simple upload
+	def upload(self,key,msg):
+		node = self.find_successor(key)
+		node.data[key] = msg
+
+	#simple display/download
+	def download(self,key):
+		node = self.find_predecessor(key)
+		return node.data[key]
 	
 	# is this id within our range?
 	def is_ours(self, id):
@@ -258,6 +269,10 @@ class Local(object):
 
 			# defaul : "" = not respond anything
 			result = json.dumps("")
+			if command == "upload":
+				key = request.split(' ')[0]
+
+				self.upload(key,msg)
                         # to check if it can be connected
 			if command == "ping_node":
 				result = json.dumps(f"{self.address_.ip}/{self.address_.port} id = {self.id()} is running")
