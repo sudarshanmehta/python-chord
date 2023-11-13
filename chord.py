@@ -70,19 +70,21 @@ class Local(object):
 		# initially no commands
 		self.command_ = []
 		# initial simple storage in hashmap itself
-		self.data = {}
+		self.data = dict()
 
 	# simple upload
 	def upload(self,key,msg):
 		node = self.find_successor(key)
-		node.data[key] = msg
-		print(f"{node.address_port}")
-		print(f"{node.data[key]}")
+		#node.data[key] = msg
+		print(type(node))
+		print(f"{node.address_.port}")
+		print(f"{node.data}")
 
 	#simple display/download
 	def download(self,key):
-		node = self.find_predecessor(key)
-		return node.data[key]
+		#node = self.find_predecessor(key)
+		#return node.data[key]
+		pass
 	
 	# is this id within our range?
 	def is_ours(self, id):
