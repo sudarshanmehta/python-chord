@@ -27,8 +27,10 @@ if __name__ == "__main__":
 
     # Extract command-line arguments
     server_address = "127.0.0.1"
-    server_port = 46924
-    message = "Command: whoami"
+    #server_port = 46924
+    #message = "Command: whoami"
+    server_port = int(sys.argv[1])
+    #message = sys.argv[2]
 
     # Call the function to send the message
     while True:

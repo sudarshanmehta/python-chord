@@ -76,6 +76,8 @@ class Local(object):
 	def upload(self,key,msg):
 		node = self.find_successor(key)
 		node.data[key] = msg
+		print(f"{node.address_port}")
+		print(f"{node.data[key]}")
 
 	#simple display/download
 	def download(self,key):
@@ -270,9 +272,13 @@ class Local(object):
 			# defaul : "" = not respond anything
 			result = json.dumps("")
 			if command == "upload":
-				key = parts[1]
+				key = int(parts[1])
 				msg = ' '.join(parts[2:])
 				self.upload(key,msg)
+			if command == "download":
+                            key = int(parts[1])
+                            msg = self.download(key)
+                            json.dumps(msg)
                         # to check if it can be connected
 			if command == "ping_node":
 				result = json.dumps(f"{self.address_.ip}/{self.address_.port} id = {self.id()} is running")
