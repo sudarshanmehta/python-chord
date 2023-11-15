@@ -73,16 +73,35 @@ class Local(object):
 		self.data = dict()
 
 	# simple upload
+	def upload_helper(self,server_address,server_port,key,msg):
+		command = "upload_ready"
+		command += key + " " + msg
+		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		s.connect((server_address, server_port))
+		s.sendall(command.encode() + b"\r\n")
+		print("Response : '%s'" % s.recv(10000).decode())
+		s.close()
+		pass
+
 	def upload(self,key,msg):
 		node = self.find_successor(key)
+		self.upload_helper(node.address_.ip,node.address_.port,key,msg)
 		#node.data[key] = msg
-		print(type(node))
-		print(f"{node.address_.port}")
-		print(f"{node.data}")
-
+		# print(type(node))
+		# print(f"{node.address_.port}")
+		# print(f"{node.data}")
+		
+	def download_helper(self,key):
+		return self.data[key]
 	#simple display/download
 	def download(self,key):
-		#node = self.find_predecessor(key)
+		node = self.find_predecessor(key)
+		command = "download_ready" + key
+		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		s.connect((node.address_.ip, node.address_.port))
+		s.sendall(command.encode() + b"\r\n")
+		print("Response : '%s'" % s.recv(10000).decode())
+		s.close()
 		#return node.data[key]
 		pass
 	
@@ -277,11 +296,20 @@ class Local(object):
 				key = int(parts[1])
 				msg = ' '.join(parts[2:])
 				self.upload(key,msg)
+			if command == "upload ready":
+				key = int(parts[1])
+				msg = ' '.join(parts[2:])
+				self.data[key] = msg
+				result = json.dumps(f"file {key} uploaded")
+			if command == "download_ready":
+				key = int(parts[1])
+				json.dumps(self.data[key])
+
 			if command == "download":
-                            key = int(parts[1])
-                            msg = self.download(key)
-                            json.dumps(msg)
-                        # to check if it can be connected
+				key = int(parts[1])
+				msg = self.download(key)
+				# json.dumps(msg)
+			# to check if it can be connected
 			if command == "ping_node":
 				result = json.dumps(f"{self.address_.ip}/{self.address_.port} id = {self.id()} is running")
 			if command == 'whoami':
