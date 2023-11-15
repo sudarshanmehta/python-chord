@@ -85,27 +85,37 @@ class Local(object):
 		s.close()
 		return response
 
-	def upload(self,key,msg):
+	def upload(self,key:int,msg):
 		node = self.find_successor(key)
-		response = self.upload_helper(node.address_.ip,node.address_.port,key,msg)
+		if node.address_.port == self.address_.port:
+			self.data[key] = msg
+			response = f"file with {key} uploaded"
+		else:
+			command = "upload "
+			command += str(key) + " " + msg
+			s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			s.connect((node.address_.ip, node.address_.port))
+			s.sendall(command.encode() + b"\r\n")
+			response = s.recv(10000).decode()
+		# response = self.upload_helper(node.address_.ip,node.address_.port,key,msg)
 		return response
-		#node.data[key] = msg
-		# print(type(node))
-		# print(f"{node.address_.port}")
-		# print(f"{node.data}")
+
 		
-	def download_helper(self,key):
+	def download_helper(self,key:int):
 		return json.dumps(self.data[key])
 	#simple display/download
 	def download(self,key):
 		node = self.find_successor(key)
-		command = "download_ready" + str(key)
-		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		s.connect((node.address_.ip, node.address_.port))
-		s.sendall(command.encode() + b"\r\n")
-		response = s.recv(10000).decode()
-		print("Response : '%s'" % response)
-		s.close()
+		if node.address_.port == self.address_.port:
+			response = json.dumps(self.data[key])
+		else:
+			command = "download " + str(key)
+			s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			s.connect((node.address_.ip, node.address_.port))
+			s.sendall(command.encode() + b"\r\n")
+			response = s.recv(10000).decode()
+			print("Response : '%s'" % response)
+			s.close()
 		return response
 		
 	
