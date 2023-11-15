@@ -75,7 +75,7 @@ class Local(object):
 	# simple upload
 	def upload_helper(self,server_address,server_port,key,msg):
 		command = "upload_ready"
-		command += key + " " + msg
+		command += str(key) + " " + msg
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		s.connect((server_address, server_port))
 		s.sendall(command.encode() + b"\r\n")
@@ -96,7 +96,7 @@ class Local(object):
 	#simple display/download
 	def download(self,key):
 		node = self.find_predecessor(key)
-		command = "download_ready" + key
+		command = "download_ready" + str(key)
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		s.connect((node.address_.ip, node.address_.port))
 		s.sendall(command.encode() + b"\r\n")
@@ -292,11 +292,14 @@ class Local(object):
 
 			# defaul : "" = not respond anything
 			result = json.dumps("")
+			if command == "get":
+				key = int(parts[1])
+				json.dumps(self.data)
 			if command == "upload":
 				key = int(parts[1])
 				msg = ' '.join(parts[2:])
 				self.upload(key,msg)
-			if command == "upload ready":
+			if command == "upload_ready":
 				key = int(parts[1])
 				msg = ' '.join(parts[2:])
 				self.data[key] = msg
