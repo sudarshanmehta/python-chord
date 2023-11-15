@@ -95,7 +95,7 @@ class Local(object):
 		return self.data[key]
 	#simple display/download
 	def download(self,key):
-		node = self.find_predecessor(key)
+		node = self.find_successor(key)
 		command = "download_ready" + str(key)
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		s.connect((node.address_.ip, node.address_.port))
@@ -294,7 +294,10 @@ class Local(object):
 			result = json.dumps("")
 			if command == "get":
 				key = int(parts[1])
-				json.dumps(self.data)
+				if key in self.data:
+					json.dumps(self.data)
+				else:
+					print("key not present")
 			if command == "upload":
 				key = int(parts[1])
 				msg = ' '.join(parts[2:])
@@ -306,7 +309,7 @@ class Local(object):
 				result = json.dumps(f"file {key} uploaded")
 			if command == "download_ready":
 				key = int(parts[1])
-				json.dumps(self.data[key])
+				result = json.dumps(self.data[key])
 
 			if command == "download":
 				key = int(parts[1])
