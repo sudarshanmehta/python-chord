@@ -298,6 +298,8 @@ class Local(object):
 			result = json.dumps("")
 			if command == "get":
 				key = int(parts[1])
+				print("key data coming ahead")
+				print(self.data)
 				if key in self.data:
 					json.dumps(self.data)
 				else:
