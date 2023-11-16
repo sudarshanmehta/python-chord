@@ -5,8 +5,8 @@ import socket
 import random
 from chord import *
 
-# nnodes = int(sys.argv[1])
-nnodes = 3
+nnodes = int(sys.argv[1])
+# nnodes = 3
 print("Creating chord network with : %s nodes" % nnodes)
 
 # create ports
