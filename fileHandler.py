@@ -9,7 +9,7 @@ def file_handler(hashed_file_name, data):
     current_directory = os.getcwd()
 
     # Create a file path using the hashed file name in the current directory
-    file_path = os.path.join(current_directory, hashed_file_name)
+    file_path = os.path.join(current_directory, str(hashed_file_name))
 
     # Write data to the file
     with open(file_path, 'w') as file:
