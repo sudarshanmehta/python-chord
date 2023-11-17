@@ -72,19 +72,6 @@ class Local(object):
 		# initial simple storage in hashmap itself
 		self.data = dict()
 
-	# simple upload
-	# def upload_helper(self,server_address,server_port,key,msg):
-	# 	command = "upload_ready"
-	# 	command += str(key) + " " + msg
-	# 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	# 	s.connect((server_address, server_port))
-	# 	s.sendall(command.encode() + b"\r\n")
-	# 	response = s.recv(10000).decode()
-	# 	print("Response : '%s'" % response)
-	# 	# return response
-	# 	s.close()
-	# 	return response
-
 	def upload(self,key:int,msg):
 		node = self.find_successor(key)
 		if node.address_.port == self.address_.port:
@@ -101,9 +88,6 @@ class Local(object):
 		return response
 
 		
-	# def download_helper(self,key:int):
-	# 	return json.dumps(self.data[key])
-	#simple display/download
 	def download(self,key):
 		node = self.find_successor(key)
 		if node.address_.port == self.address_.port:
@@ -318,20 +302,12 @@ class Local(object):
 				key = int(parts[1])
 				msg = ' '.join(parts[2:])
 				result = json.dumps(self.upload(key,msg))
-			# if command == "upload_ready":
-			# 	key = int(parts[1])
-			# 	msg = ' '.join(parts[2:])
-			# 	self.data[key] = msg
-			# 	result = json.dumps(f"file {key} uploaded")
-			# if command == "download_ready":
-			# 	key = int(parts[1])
-			# 	result = json.dumps(self.data[key])
 
 			if command == "download":
 				key = int(parts[1])
 				msg = self.download(key)
 				result = json.dumps(msg)
-				# json.dumps(msg)
+				
 			# to check if it can be connected
 			if command == "ping_node":
 				result = json.dumps(f"{self.address_.ip}/{self.address_.port} id = {self.id()} is running")
