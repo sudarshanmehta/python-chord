@@ -12,6 +12,8 @@ from remote import Remote
 from settings import *
 from network import *
 
+from fileHandler import file_handler
+
 def repeat_and_sleep(sleep_time):
 	def decorator(func):
 		def inner(self, *args, **kwargs):
@@ -76,7 +78,8 @@ class Local(object):
 		node = self.find_successor(key)
 		if node.address_.port == self.address_.port:
 			self.data[key] = msg
-			response = f"file with {key} uploaded"
+			file_handler(key,msg)
+			response = f"file with {key} uploaded in node_id {self.id()}"
 		else:
 			command = "upload "
 			command += str(key) + " " + msg
