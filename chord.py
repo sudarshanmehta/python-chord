@@ -12,7 +12,7 @@ from remote import Remote
 from settings import *
 from network import *
 
-from fileHandler import file_handler
+from fileHandler import *
 
 def repeat_and_sleep(sleep_time):
 	def decorator(func):
@@ -74,19 +74,28 @@ class Local(object):
 		# initial simple storage in hashmap itself
 		self.data = dict()
 
-	def upload(self,key:int,msg):
+	def send_command(self,ip,port,command):
+		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		s.connect((ip, port))
+		s.sendall(command.encode() + b"\r\n")
+		response = s.recv(10000).decode()
+		s.close()
+		return response
+		
+	def upload(self,key:int,msg,replicate=1):
 		node = self.find_successor(key)
 		if node.address_.port == self.address_.port:
 			self.data[key] = msg
-			file_handler(key,msg)
+			upload_file(key,msg)			
 			response = f"file with {key} uploaded in node_id {self.id()}"
 		else:
 			command = "upload "
 			command += str(key) + " " + msg
-			s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-			s.connect((node.address_.ip, node.address_.port))
-			s.sendall(command.encode() + b"\r\n")
-			response = s.recv(10000).decode()
+			response = self.send_command(node.address_.ip, node.address_.port,command)
+			# s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			# s.connect((node.address_.ip, node.address_.port))
+			# s.sendall(command.encode() + b"\r\n")
+			# response = s.recv(10000).decode()
 		# response = self.upload_helper(node.address_.ip,node.address_.port,key,msg)
 		return response
 
@@ -94,15 +103,17 @@ class Local(object):
 	def download(self,key):
 		node = self.find_successor(key)
 		if node.address_.port == self.address_.port:
-			response = self.data[key]
+			response_temp = self.data[key]
+			response = download_file(key)
 		else:
 			command = "download " + str(key)
-			s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-			s.connect((node.address_.ip, node.address_.port))
-			s.sendall(command.encode() + b"\r\n")
-			response = s.recv(10000).decode()
+			# s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			# s.connect((node.address_.ip, node.address_.port))
+			# s.sendall(command.encode() + b"\r\n")
+			# response = s.recv(10000).decode()
+			response = self.send_command(node.address_.ip, node.address_.port,command)
 			print("Response : '%s'" % response)
-			s.close()
+			# s.close()
 		return response
 		
 	

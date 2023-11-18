@@ -1,7 +1,7 @@
 import os
 import hashlib
 
-def file_handler(hashed_file_name, data):
+def upload_file(hashed_file_name, data):
     # Assuming 'FileData' is a global dictionary
     # global FileData
 
@@ -9,7 +9,7 @@ def file_handler(hashed_file_name, data):
     current_directory = os.getcwd()
 
     # Create a file path using the hashed file name in the current directory
-    file_path = os.path.join(current_directory, str(hashed_file_name)+".txt")
+    file_path = os.path.join(current_directory, str(hashed_file_name)+".txt ")
 
     # Write data to the file
     with open(file_path, 'w') as file:
@@ -17,6 +17,14 @@ def file_handler(hashed_file_name, data):
 
     # Update the FileData map
     # FileData[hashed_file_name] = file_path
+
+def download_file(hashed_file_name):
+    current_directory = os.getcwd()
+    file_path = os.path.join(current_directory, str(hashed_file_name)+".txt ")
+
+    with open(file_path, 'w') as file:
+        file_data = file.read()
+        return file_data
 
 # Example usage:
 # Assuming FileData is an empty dictionary initially
