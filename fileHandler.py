@@ -9,7 +9,7 @@ def upload_file(hashed_file_name, data):
     current_directory = os.getcwd()
 
     # Create a file path using the hashed file name in the current directory
-    file_path = os.path.join(current_directory, str(hashed_file_name)+".txt ")
+    file_path = os.path.join(current_directory, str(hashed_file_name).strip()+".txt")
 
     # Write data to the file
     with open(file_path, 'w') as file:
@@ -20,7 +20,7 @@ def upload_file(hashed_file_name, data):
 
 def download_file(hashed_file_name):
     current_directory = os.getcwd()
-    file_path = os.path.join(current_directory, str(hashed_file_name)+".txt ")
+    file_path = os.path.join(current_directory, str(hashed_file_name).strip()+".txt")
 
     with open(file_path, 'w') as file:
         file_data = file.read()
