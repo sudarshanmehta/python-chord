@@ -96,8 +96,8 @@ class Local(object):
 			self.data[key] = msg
 			upload_file(key,msg)			
 			response = f"file with {key} uploaded in node_id {self.id()}"
-			succ_node = self.find_successor(key)
-			pred_node = self.find_predecessor(key)
+			succ_node = self.successor()
+			pred_node = self.predecessor()
 
 			#send command to replicate
 			command = "replicated_upload "
