@@ -12,7 +12,7 @@ def upload_file(hashed_file_name, data):
     file_path = os.path.join(current_directory, str(hashed_file_name).strip()+".txt")
 
     # Write data to the file
-    with open(file_path, 'w') as file:
+    with open(file_path, 'a') as file:
         file.write(data)
 
     # Update the FileData map
