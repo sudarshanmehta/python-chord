@@ -22,7 +22,7 @@ def download_file(hashed_file_name):
     current_directory = os.getcwd()
     file_path = os.path.join(current_directory, str(hashed_file_name).strip()+".txt")
 
-    with open(file_path, 'w') as file:
+    with open(file_path, 'r') as file:
         file_data = file.read()
         return file_data
 

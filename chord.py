@@ -82,38 +82,44 @@ class Local(object):
 		s.close()
 		return response
 		
-	def upload(self,key:int,msg,replicate=1):
+	def upload(self,key:int,msg:str,replicated=0):
 		node = self.find_successor(key)
-		if node.address_.port == self.address_.port:
+		
+		#this assume this is replicated and the ip,port are correct so simply upload the file
+		if replicated == 1:
 			self.data[key] = msg
 			upload_file(key,msg)			
 			response = f"file with {key} uploaded in node_id {self.id()}"
+
+		# this is when the upload is in correct node but not replicated
+		elif node.address_.port == self.address_.port:
+			self.data[key] = msg
+			upload_file(key,msg)			
+			response = f"file with {key} uploaded in node_id {self.id()}"
+			succ_node = self.find_successor(key)
+			pred_node = self.find_predecessor(key)
+
+			#send command to replicate
+			command = "replicated_upload "
+			command += str(key) + " " + msg
+			self.send_command(succ_node.address_.ip,succ_node.address_.port,command)
+			self.send_command(pred_node.address_.ip,pred_node.address_.port,command)
+
 		else:
 			command = "upload "
 			command += str(key) + " " + msg
 			response = self.send_command(node.address_.ip, node.address_.port,command)
-			# s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-			# s.connect((node.address_.ip, node.address_.port))
-			# s.sendall(command.encode() + b"\r\n")
-			# response = s.recv(10000).decode()
-		# response = self.upload_helper(node.address_.ip,node.address_.port,key,msg)
 		return response
 
 		
 	def download(self,key):
 		node = self.find_successor(key)
 		if node.address_.port == self.address_.port:
-			response_temp = self.data[key]
 			response = download_file(key)
 		else:
 			command = "download " + str(key)
-			# s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-			# s.connect((node.address_.ip, node.address_.port))
-			# s.sendall(command.encode() + b"\r\n")
-			# response = s.recv(10000).decode()
 			response = self.send_command(node.address_.ip, node.address_.port,command)
 			print("Response : '%s'" % response)
-			# s.close()
 		return response
 		
 	
@@ -316,6 +322,11 @@ class Local(object):
 				key = int(parts[1])
 				msg = ' '.join(parts[2:])
 				result = json.dumps(self.upload(key,msg))
+			
+			if command == "replicated_upload":
+				key = int(parts[1])
+				msg = ' '.join(parts[2:])
+				result = json.dumps(self.upload(key,msg,1))
 
 			if command == "download":
 				key = int(parts[1])
